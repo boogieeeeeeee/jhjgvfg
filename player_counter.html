@@ -1,0 +1,17 @@
+<div class="player-dashboard" style="position: absolute; top: 20px; left: 20px; z-index: 10; display: flex; align-items: center; gap: 10px; background: rgba(10, 10, 10, 0.6); border: 1px solid #111; padding: 8px 16px; border-radius: 20px; font-family: monospace; font-size: 0.9rem; letter-spacing: 1px;">
+    <div class="status-dot" style="width: 8px; height: 8px; background-color: #00ff00; border-radius: 50%; box-shadow: 0 0 10px #00ff00; animation: blink 2s infinite alternate;"></div>
+    <span>LIVE TRAFFIC: <span id="online-count" style="color: #00ff00; font-weight: bold;">1</span></span>
+</div>
+<style>@keyframes blink { 0% { opacity: 0.4; } 100% { opacity: 1; } }</style>
+<script>
+    function sendHeartbeat() { fetch('/heartbeat', { method: 'POST' }); }
+    function updatePlayerCount() {
+        fetch('/player-count')
+            .then(res => res.json())
+            .then(data => { document.getElementById('online-count').innerText = data.count; });
+    }
+    setInterval(sendHeartbeat, 5000);
+    setInterval(updatePlayerCount, 5000);
+    sendHeartbeat();
+    updatePlayerCount();
+</script>

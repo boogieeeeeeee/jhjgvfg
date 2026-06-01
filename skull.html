@@ -1,0 +1,81 @@
+<canvas id="skullCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></canvas>
+
+<script>
+    const canvas = document.getElementById('skullCanvas');
+    const ctx = canvas.getContext('2d');
+    let mouse = { x: 0, y: 0 };
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resize);
+    window.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    });
+    resize();
+
+    function drawSkull() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2 - 50;
+
+        const laughOffset = Math.sin(Date.now() * 0.015) * 12;
+
+        ctx.fillStyle = '#111';
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 3;
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, 100, 0, Math.PI, true);
+        ctx.lineTo(cx - 100, cy + 60);
+        ctx.lineTo(cx + 100, cy + 60);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.rect(cx - 50, cy + 80 + laughOffset, 100, 40);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#222';
+        for(let i = -40; i <= 40; i += 20) {
+            ctx.fillRect(cx + i - 5, cy + 60, 10, 10);
+            ctx.fillRect(cx + i - 5, cy + 80 + laughOffset, 10, 10);
+        }
+
+        ctx.fillStyle = '#000';
+        ctx.beginPath(); ctx.arc(cx - 40, cy + 10, 25, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.arc(cx + 40, cy + 10, 25, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(cx, cy + 35);
+        ctx.lineTo(cx - 10, cy + 50);
+        ctx.lineTo(cx + 10, cy + 50);
+        ctx.closePath();
+        ctx.fill();
+
+        function drawPupil(eyeX, eyeY) {
+            const dx = mouse.x - eyeX;
+            const dy = mouse.y - eyeY;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            let angle = Math.atan2(dy, dx);
+            let tRadius = Math.min(12, dist * 0.05);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(eyeX + Math.cos(angle) * tRadius, eyeY + Math.sin(angle) * tRadius, 5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        drawPupil(cx - 40, cy + 10);
+        drawPupil(cx + 40, cy + 10);
+
+        requestAnimationFrame(drawSkull);
+    }
+
+    drawSkull();
+</script>

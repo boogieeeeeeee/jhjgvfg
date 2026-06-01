@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SlaptasZebra</title>
+    <style>
+        body, html { margin: 0; padding: 0; background-color: #000; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; scroll-behavior: smooth; }
+        .hero-section { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; text-align: center; }
+        .content-box { z-index: 2; pointer-events: none; max-width: 800px; padding: 20px; }
+        .fade-container { height: 80px; margin: 20px 0; display: flex; justify-content: center; align-items: center; }
+        .fade-text { font-size: 2.5rem; font-weight: bold; opacity: 0; position: absolute; transition: opacity 1s ease-in-out; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
+        .fade-text.active { opacity: 1; }
+        .scroll-btn { z-index: 2; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 12px 30px; border-radius: 30px; cursor: pointer; font-size: 1rem; transition: 0.3s; text-decoration: none; pointer-events: auto; outline: none; }
+        .scroll-btn:hover { background: #fff; color: #000; box-shadow: 0 0 20px #fff; }
+
+        .version-tag { position: absolute; top: 20px; right: 20px; z-index: 10; font-family: monospace; font-size: 0.9rem; color: #444; letter-spacing: 1px; }
+
+        .content-section { height: 100vh; width: 100vw; background-color: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 20px; z-index: 2; position: relative; box-shadow: 0 -20px 40px rgba(0,0,0,0.9); box-sizing: border-box; overflow: hidden; }
+        .game-card { background: #050505; border: 1px solid #111; padding: 25px; border-radius: 8px; text-align: center; transition: 0.3s ease-in-out; text-decoration: none; color: #888; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .game-card:hover { border-color: #fff; color: #fff; background: #0a0a0a; box-shadow: 0 0 15px rgba(255,255,255,0.05); transform: translateY(-3px); }
+        .game-card h3 { margin: 0 0 10px 0; font-size: 1.4rem; letter-spacing: 1px; }
+        .game-card p { margin: 0; font-size: 0.9rem; color: #444; }
+        .game-card:hover p { color: #888; }
+
+        .instruction-box { background: #110000; border: 1px solid #441111; color: #ff3333; padding: 8px 15px; font-size: 0.85rem; font-family: monospace; border-radius: 4px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
+        .return-btn { z-index: 5; background: rgba(255, 255, 255, 0.02); border: 1px solid #222; color: #555; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-size: 0.9rem; transition: 0.3s; outline: none; text-transform: uppercase; letter-spacing: 2px; }
+        .return-btn:hover { border-color: #fff; color: #fff; box-shadow: 0 0 15px rgba(255,255,255,0.1); }
+        #alert-banner { position: fixed; top: 0; width: 100%; background: #990000; color: white; text-align: center; padding: 10px 0; font-weight: bold; z-index: 100; display: none; }
+    </style>
+</head>
+<body>
+    <div id="alert-banner">SYSTEM WARNING</div>
+
+    <div id="top" class="hero-section">
+        <div class="version-tag">vers=1.4.2_beta</div>
+        {% include 'player_counter.html' %}
+        {% include 'skull.html' %}
+
+        <div class="content-box">
+            <div class="fade-container">
+                <div class="fade-text active" id="sec-weather">Weather: Loading Farmington...</div>
+                <div class="fade-text" id="sec-date">Date: Loading...</div>
+                <div class="fade-text" id="sec-secret" style="color: #ff3333; letter-spacing: 8px;">Secret</div>
+            </div>
+            <button onclick="executeScroll('content')" class="scroll-btn">press this too make it scroll down.</button>
+        </div>
+    </div>
+
+    <div id="content" class="content-section">
+        {% include 'game_grid.html' %}
+        <button onclick="executeScroll('top')" class="return-btn">Scroll Back Up</button>
+    </div>
+
+    <script>
+        function executeScroll(targetId) {
+            document.body.style.overflow = "auto";
+            document.documentElement.style.overflow = "auto";
+            document.getElementById(targetId).scrollIntoView({ behavior: "smooth" });
+            setTimeout(() => {
+                document.body.style.overflow = "hidden";
+                document.documentElement.style.overflow = "hidden";
+            }, 800);
+        }
+
+        const textElements = [document.getElementById('sec-weather'), document.getElementById('sec-date'), document.getElementById('sec-secret')];
+        let currentTextIdx = 0;
+        setInterval(() => {
+            textElements[currentTextIdx].classList.remove('active');
+            currentTextIdx = (currentTextIdx + 1) % textElements.length;
+            textElements[currentTextIdx].classList.add('active');
+        }, 4000);
+
+        document.getElementById('sec-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+        document.getElementById('sec-weather').innerText = "Farmington, NH: 68°F | Clear";
+
+        function pollStatus() {
+            fetch('/system-status')
+                .then(res => res.json())
+                .then(data => {
+                    const banner = document.getElementById('alert-banner');
+                    if (data.status === 'warning_two') {
+                        banner.style.display = 'block';
+                        banner.innerText = "WARNING: Web access terminates in under 20 minutes (14:30)!";
+                    } else if (data.status === 'warning_one') {
+                        banner.style.display = 'block';
+                        banner.innerText = "Notice: Core infrastructure scheduled in under 1 hour.";
+                    } else {
+                        banner.style.display = 'none';
+                    }
+                });
+        }
+        setInterval(pollStatus, 30000);
+    </script>
+</body>
+</html>

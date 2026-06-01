@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>System Offline</title>
+    <style>
+        body { background: #000; color: #666; font-family: monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; text-align: center; position: relative; overflow: hidden; }
+        .owner-widget { position: absolute; top: 20px; right: 20px; text-align: right; z-index: 10; background: #080808; padding: 12px; border: 1px solid #1a1a1a; border-radius: 4px; }
+        .owner-widget label { font-size: 0.8rem; color: #444; display: block; margin-bottom: 5px; text-transform: uppercase; font-weight: bold; }
+        .owner-widget input { background: #000; border: 1px solid #222; color: #00ff00; padding: 6px; width: 110px; font-size: 0.9rem; text-align: center; font-family: monospace; border-radius: 3px; outline: none; }
+        .owner-widget input:focus { border-color: #00ff00; }
+        .owner-widget button { background: #111; color: #888; border: 1px solid #222; padding: 6px 10px; font-size: 0.8rem; cursor: pointer; border-radius: 3px; margin-left: 4px; }
+        .owner-widget button:hover { color: #fff; background: #222; }
+        .eye-graphic { font-size: 7rem; color: #444; margin-bottom: 10px; animation: pulse 3s infinite ease-in-out; }
+        @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 0.8; } 100% { opacity: 0.3; } }
+        .wrapper { max-width: 600px; padding: 20px; }
+        h1 { color: #888; font-size: 1.4rem; letter-spacing: 2px; }
+        #countdown { font-size: 2rem; color: #00ff00; margin-top: 20px; font-weight: bold; text-shadow: 0 0 10px rgba(0,255,0,0.2); }
+        .err-msg { color: #ff3333; font-size: 0.8rem; margin-top: 5px; display: block; }
+        #kick-timer-banner { position: fixed; top: 0; left: 0; width: 100%; background: #cc0000; color: #fff; font-weight: bold; padding: 12px 0; font-size: 1.1rem; z-index: 100; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+    <div id="kick-timer-banner">TERMINATING SESSION IN <span id="kick-seconds">5</span> SECONDS...</div>
+    <div class="owner-widget">
+        <label>owner only</label>
+        <form action="/owner-bypass" method="POST">
+            <input type="password" name="bypass_code" id="owner-input" placeholder="••••••" maxlength="6" autocomplete="off" onfocus="extendOwnerTime()"><button type="submit">Go</button>
+        </form>
+        {% if error %}<span class="err-msg">{{ error }}</span>{% endif %}
+    </div>
+    <div class="wrapper">
+        <div class="eye-graphic">👁</div>
+        <h1>site is currently shutdown at this moment of time. 6:50-14:30.</h1>
+        <p>Operational Schedule: Monday – Friday</p>
+        <div id="countdown">Calculating Return Windows...</div>
+    </div>
+    <script>
+        let kickTimeLeft = 5;
+        let countdownInterval;
+        let hasExtended = false;
+
+        function startKickCountdown() {
+            countdownInterval = setInterval(() => {
+                kickTimeLeft--;
+                document.getElementById('kick-seconds').innerText = kickTimeLeft;
+                if (kickTimeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    executeForcedExit();
+                }
+            }, 1000);
+        }
+
+        function extendOwnerTime() {
+            if (hasExtended) return;
+            hasExtended = true;
+            clearInterval(countdownInterval);
+            kickTimeLeft = 10;
+            document.getElementById('kick-seconds').innerText = kickTimeLeft;
+            document.getElementById('kick-timer-banner').style.background = "#333300";
+            startKickCountdown();
+        }
+
+        function executeForcedExit() {
+            window.close();
+            setTimeout(() => { window.location.href = "about:blank"; }, 100);
+        }
+
+        function updateCountdown() {
+            const now = new Date();
+            const estTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
+            let target = new Date(estTime); target.setHours(6, 50, 0, 0);
+            if (estTime >= target) target.setDate(target.getDate() + 1);
+            while (target.getDay() === 6 || target.getDay() === 0) { target.setDate(target.getDate() + 1); }
+            const diff = target - estTime;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            document.getElementById('countdown').innerText = `System Unlocks In: ${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        window.onload = function() {
+            setInterval(updateCountdown, 1000);
+            updateCountdown();
+            startKickCountdown();
+        }
+    </script>
+</body>
+</html>

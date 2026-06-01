@@ -1,0 +1,126 @@
+<div style="display: flex; gap: 30px; max-width: 1300px; width: 100%; align-items: stretch; margin-bottom: 20px; box-sizing: border-box;">
+
+    <!-- BOX 1: RESTRICTION & GATEKEEP DISCLAIMER -->
+    <div style="flex: 1; background: #050505; border: 1px solid #111; padding: 25px; border-radius: 8px; font-size: 0.9rem; line-height: 1.6; color: #666; text-align: left; display: flex; flex-direction: column; justify-content: center;">
+        <span style="color: #ff3333; font-family: monospace; font-weight: bold; margin-bottom: 10px; display: block; letter-spacing: 1px; font-size: 0.8rem; text-transform: uppercase;">System Notice</span>
+        this website was made for school, the reason why it wont be open 24/7 is a risk of being blocked permantly. if you have any questions well, it will never be answered. more progress will be added. please gatekeep the links and activites in this website and gatekeep this website. please and thank you.
+    </div>
+
+    <!-- BOX 2: CORE PLATFORM LINKS AND PROXY ENGAGEMENT -->
+    <div style="flex: 1.5; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; margin-bottom: 25px;">
+            <a href="https://google.com" target="_blank" rel="noopener noreferrer" class="game-card">
+                <h3>Core Framework Node</h3>
+                <p>Initialize directory mapping</p>
+            </a>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <div class="instruction-box" style="margin-bottom: 10px; width: 100%; text-align: center;">password is UltraKIll</div>
+                <a href="https://github.io" target="_blank" rel="noopener noreferrer" class="game-card" style="width: 100%; box-sizing: border-box;">
+                    <h3>Stealth Mirror</h3>
+                    <p>Initialize gateway instance</p>
+                </a>
+            </div>
+        </div>
+
+        <div style="background: #050505; border: 1px solid #111; padding: 20px; border-radius: 8px; width: 100%; box-sizing: border-box; text-align: left;">
+            <h3 style="margin: 0 0 5px 0; color: #fff; font-size: 1.1rem; letter-spacing: 1px; font-family: sans-serif; text-transform: uppercase;">Launch Proxy Gateway</h3>
+            <div style="display: flex; gap: 10px; width: 100%; margin-bottom: 10px;">
+                <input type="text" id="proxy-url" placeholder="Type URL or search query here..." style="flex: 1; background: #000; border: 1px solid #222; color: #00ff00; padding: 10px; border-radius: 4px; outline: none; font-family: monospace; font-size: 0.85rem;">
+                <button onclick="launchProxyNode()" style="background: #fff; color: #000; border: none; padding: 0 20px; font-weight: bold; border-radius: 4px; cursor: pointer; font-family: sans-serif; font-size: 0.85rem;">Launch</button>
+            </div>
+            <div style="color: #444; font-family: monospace; font-size: 0.8rem; text-align: center; width: 100%; letter-spacing: 1px;">(this is a work and progress.)</div>
+        </div>
+
+    </div>
+
+    <!-- BOX 3: RUNNING IN PLACE CANVAS ZEBRA ANIMATION -->
+    <div style="flex: 1; background: #050505; border: 1px solid #111; padding: 20px; border-radius: 8px; display: flex; justify-content: center; align-items: center; overflow: hidden; position: relative;">
+        <canvas id="zebraCanvas" width="200" height="200"></canvas>
+    </div>
+
+</div>
+
+<script>
+function launchProxyNode() {
+    let inputVal = document.getElementById('proxy-url').value.trim();
+    if (!inputVal) return;
+    if (!inputVal.startsWith('http://') && !inputVal.startsWith('https://')) {
+        if (inputVal.includes('.')) { inputVal = 'https://' + inputVal; }
+        else { inputVal = 'https://google.com' + encodeURIComponent(inputVal); }
+    }
+    window.open("https://vercel.app" + btoa(inputVal), '_blank');
+}
+document.getElementById('proxy-url').addEventListener('keydown', function(e) { if (e.key === 'Enter') { launchProxyNode(); } });
+
+// --- ANIMATION RUNNING LOOP FOR BOX 3 ZEBRA ---
+const zCanvas = document.getElementById('zebraCanvas');
+const zCtx = zCanvas.getContext('2d');
+let frameCount = 0;
+
+function drawZebraRunner() {
+    zCtx.clearRect(0,0,200,200);
+    frameCount++;
+
+    let legMovement = Math.sin(frameCount * 0.2) * 12;
+    let bodyBounce = Math.cos(frameCount * 0.4) * 2;
+
+    zCtx.lineWidth = 4;
+    zCtx.lineCap = 'round';
+
+    // Front Legs Pair
+    zCtx.strokeStyle = '#555';
+    zCtx.beginPath(); zCtx.moveTo(110, 110 + bodyBounce); zCtx.lineTo(125 + legMovement, 150); zCtx.stroke();
+    zCtx.strokeStyle = '#fff';
+    zCtx.beginPath(); zCtx.moveTo(110, 110 + bodyBounce); zCtx.lineTo(100 - legMovement, 150); zCtx.stroke();
+
+    // Back Legs Pair
+    zCtx.strokeStyle = '#555';
+    zCtx.beginPath(); zCtx.moveTo(60, 105 + bodyBounce); zCtx.lineTo(45 - legMovement, 148); zCtx.stroke();
+    zCtx.strokeStyle = '#fff';
+    zCtx.beginPath(); zCtx.moveTo(60, 105 + bodyBounce); zCtx.lineTo(75 + legMovement, 148); zCtx.stroke();
+
+    // Body Block Core
+    zCtx.fillStyle = '#fff';
+    zCtx.beginPath();
+    zCtx.ellipse(85, 100 + bodyBounce, 35, 20, 0, 0, Math.PI * 2);
+    zCtx.fill();
+
+    // Zebra Stripe Patterns (Alternating fill vectors)
+    zCtx.fillStyle = '#000';
+    for(let i = -25; i <= 25; i += 12) {
+        zCtx.beginPath();
+        zCtx.moveTo(85 + i, 82 + bodyBounce);
+        zCtx.lineTo(82 + i, 118 + bodyBounce);
+        zCtx.lineTo(88 + i, 118 + bodyBounce);
+        zCtx.closePath();
+        zCtx.fill();
+    }
+
+    // Neck component
+    zCtx.strokeStyle = '#fff';
+    zCtx.lineWidth = 14;
+    zCtx.beginPath(); zCtx.moveTo(110, 95 + bodyBounce); zCtx.lineTo(125, 65 + bodyBounce); zCtx.stroke();
+
+    // Neck stripes
+    zCtx.strokeStyle = '#000';
+    zCtx.lineWidth = 3;
+    zCtx.beginPath(); zCtx.moveTo(112, 85 + bodyBounce); zCtx.lineTo(122, 88 + bodyBounce); zCtx.stroke();
+    zCtx.beginPath(); zCtx.moveTo(118, 73 + bodyBounce); zCtx.lineTo(126, 76 + bodyBounce); zCtx.stroke();
+
+    // Head component
+    zCtx.fillStyle = '#fff';
+    zCtx.beginPath(); zCtx.ellipse(135, 60 + bodyBounce, 16, 10, Math.PI/6, 0, Math.PI * 2); zCtx.fill();
+    zCtx.fillStyle = '#000';
+    zCtx.beginPath(); zCtx.arc(142, 56 + bodyBounce, 2.5, 0, Math.PI * 2); zCtx.fill(); // Eye
+    zCtx.beginPath(); zCtx.ellipse(146, 65 + bodyBounce, 5, 5, 0, 0, Math.PI * 2); zCtx.fill(); // Muzzle
+
+    // Tail structure
+    zCtx.strokeStyle = '#fff';
+    zCtx.lineWidth = 3;
+    zCtx.beginPath(); zCtx.moveTo(52, 98 + bodyBounce); zCtx.quadraticCurveTo(35, 105 + legMovement/2, 40, 130); zCtx.stroke();
+
+    requestAnimationFrame(drawZebraRunner);
+}
+drawZebraRunner();
+</script>

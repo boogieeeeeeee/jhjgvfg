@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Security Intercept</title>
+    <style>
+        body { background: #050000; color: #ff4444; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { text-align: center; max-width: 500px; padding: 30px; border: 1px solid #440000; background: #0c0202; border-radius: 5px; }
+        input { background: #1a0505; border: 1px solid #551111; color: #ff8888; padding: 10px; width: 80%; text-align: center; margin: 15px 0; font-size: 1rem; }
+        button { background: #ff4444; color: black; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h3>got it wrong? tell the owner of the website and he will put a redo code in!</h3>
+        {% if error %}<p style="color: white; font-weight: bold;">{{ error }}</p>{% endif %}
+        <form method="POST">
+            <input type="text" name="redo_code" placeholder="Enter Owner Verification Token" autocomplete="off"><br>
+            <button type="submit">Submit Token</button>
+        </form>
+    </div>
+</body>
+</html>
